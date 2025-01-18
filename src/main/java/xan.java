@@ -1,5 +1,3 @@
-import java.sql.SQLOutput;
-
 public class xan {
     public static void main(String[] args) {
         System.out.println("Hello! I'm xan!");
