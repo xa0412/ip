@@ -36,9 +36,33 @@ public class Xan {
     }
 
     private static void addList(String chat) {
-        Task task = new Task(chat);
-        listArray.add(task);
-        System.out.println("added: " + chat);
+        if (chat.startsWith("todo")) {
+            String description = chat.substring(5);
+            Task task = new Todo(description);
+            listArray.add(task);
+            System.out.println("Got it. I've added this task:");
+            System.out.println(task.toString());
+            System.out.println("Now you have " + listArray.size() + " task in the list.");
+        } else if (chat.startsWith("deadline")) {
+            String[] split = chat.split("/by ");
+            String description = split[0].substring(9);
+            String by = split[1];
+            Task task = new Deadline(description, by);
+            listArray.add(task);
+            System.out.println("Got it. I've added this task:");
+            System.out.println(task.toString());
+            System.out.println("Now you have " + listArray.size() + " task in the list.");
+        } else if (chat.startsWith("event")) {
+            String[] split = chat.split("/from | /to ");
+            String description = split[0].substring(6);
+            String start = split[1];
+            String end = split[2];
+            Task task = new Event(description, start, end);
+            listArray.add(task);
+            System.out.println("Got it. I've added this task:");
+            System.out.println(task.toString());
+            System.out.println("Now you have " + listArray.size() + " task in the list.");
+        }
     }
 
     private static void markTask(String chat) {
