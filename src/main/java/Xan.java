@@ -4,6 +4,20 @@ import java.util.Scanner;
 public class Xan {
     private static final ArrayList<Task> listArray =  new ArrayList<>();
 
+    private enum TaskType {
+        TODO,
+        DEADLINE,
+        EVENT;
+
+        public static TaskType fromString(String input) {
+            return switch (input.toLowerCase()) {
+                case "todo" -> TODO;
+                case "deadline" -> DEADLINE;
+                case "event" -> EVENT;
+                default -> throw new IllegalArgumentException("Unknown task type: " + input);
+            };
+        }
+    }
     public static void main(String[] args) {
         welcomeMessage();
         Scanner sc = new Scanner(System.in);
@@ -25,52 +39,62 @@ public class Xan {
                 } else {
                     addList(chat);
                 }
-            } catch (XanException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
     private static void showList() {
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < listArray.size(); i++) {
-            Task task = listArray.get(i);
-            System.out.println((i + 1) + "." + task.toString());
+        if (listArray.isEmpty()) {
+            System.out.println("No tasks found");
+        } else {
+            System.out.println("Here are the tasks in your list:");
+            for (int i = 0; i < listArray.size(); i++) {
+                Task task = listArray.get(i);
+                System.out.println((i + 1) + "." + task.toString());
+            }
         }
     }
 
-    private static void addList(String chat) throws XanException {
-        if (chat.startsWith("todo")) {
-            if (chat.length() < 5) {
-                throw new XanException("Description of todo cannot be empty!");
+    private static void addList(String chat) throws IllegalArgumentException {
+        String[] words = chat.split(" ", 2);
+        if (words[0].equals("todo") || words[0].equals("deadline") || words[0].equals("event")) {
+            if (words.length < 2) {
+                throw new XanException("The description of a task cannot be empty!");
             }
-            String description = chat.substring(5).trim();
-            Task task = new Todo(description);
-            listArray.add(task);
-            addTask(task);
-        } else if (chat.startsWith("deadline")) {
-            if (chat.length() < 9) {
-                throw new XanException("Description/Due date of deadline cannot be empty!");
+
+            TaskType taskType = TaskType.fromString(words[0]);
+            String details = words[1];
+
+            switch (taskType) {
+                case TODO:
+                    Task todoTask = new Todo(details);
+                    listArray.add(todoTask);
+                    addTask(todoTask);
+                    break;
+                case DEADLINE:
+                    if (!details.contains("/by ")) {
+                        throw new XanException("A deadline task must have a '/by' clause!");
+                    }
+                    String[] deadlineParts = details.split("/by ", 2);
+                    Task deadlineTask = new Deadline(deadlineParts[0].trim(), deadlineParts[1].trim());
+                    listArray.add(deadlineTask);
+                    addTask(deadlineTask);
+                    break;
+                case EVENT:
+                    if (!details.contains("/from ") || !details.contains("/to ")) {
+                        throw new XanException("An event task must have both '/from' and '/to' clauses!");
+                    }
+                    String[] eventParts = details.split("/from | /to ");
+                    Task eventTask = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
+                    listArray.add(eventTask);
+                    addTask(eventTask);
+                    break;
             }
-            String[] split = chat.split("/by ");
-            String description = split[0].substring(9);
-            String by = split[1];
-            Task task = new Deadline(description, by);
-            listArray.add(task);
-            addTask(task);
-        } else if (chat.startsWith("event")) {
-            if (chat.length() < 6) {
-                throw new XanException("Description/Start time/End time of event cannot be empty!");
-            }
-            String[] split = chat.split("/from | /to ");
-            String description = split[0].substring(6);
-            String start = split[1];
-            String end = split[2];
-            Task task = new Event(description, start, end);
-            listArray.add(task);
-            addTask(task);
         } else {
-            throw new XanException("OOPS! Unknown command!");
+            throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline', 'event', 'delete'," +
+                    " 'list', 'mark', 'unmark'.");
         }
     }
 
@@ -101,7 +125,7 @@ public class Xan {
         System.out.println("Enter the following commands to get started:");
         System.out.println("  todo: tasks without any date/time attached to it. e.g. todo visit new theme park");
         System.out.println("  deadline: tasks that need to be done before a specific date/time. " +
-                "e.g. deadline submit report by 11/10/2019 5pm");
+                "e.g. deadline return book /by Sunday");
         System.out.println("  event: tasks that start at a specific date/time and ends at a specific date/time. " +
                 "e.g. event project meeting /from Mon 2pm /to 4pm");
         System.out.println("  delete: to delete task. e.g. deleted 1");
