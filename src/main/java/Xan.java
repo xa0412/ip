@@ -20,6 +20,8 @@ public class Xan {
                     markTask(chat);
                 } else if (chat.startsWith("unmark")) {
                     unmarkTask(chat);
+                } else if (chat.startsWith("delete")) {
+                    deleteTask(chat);
                 } else {
                     addList(chat);
                 }
@@ -102,9 +104,19 @@ public class Xan {
                 "e.g. deadline submit report by 11/10/2019 5pm");
         System.out.println("  event: tasks that start at a specific date/time and ends at a specific date/time. " +
                 "e.g. event project meeting /from Mon 2pm /to 4pm");
+        System.out.println("  delete: to delete task. e.g. deleted 1");
         System.out.println("  list: to show all the tasks in your list.");
         System.out.println("  mark: to mark list as marked as completed. e.g. mark 1");
         System.out.println("  unmark: to unmark list as not completed. e.g. unmark 1");
         System.out.println("What can I do for you?");
+    }
+
+    private static void deleteTask(String chat) {
+        int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
+        Task task = listArray.get(taskIndex);
+        System.out.println("Noted. I've remove this task:");
+        System.out.println((taskIndex + 1) + "." + task.toString());
+        listArray.remove(taskIndex);
+        System.out.println("Now you have " + listArray.size() + " tasks in the list.");
     }
 }
