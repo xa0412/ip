@@ -42,7 +42,7 @@ public class Xan {
             listArray.add(task);
             System.out.println("Got it. I've added this task:");
             System.out.println(task.toString());
-            System.out.println("Now you have " + listArray.size() + " task in the list.");
+            System.out.println("Now you have " + listArray.size() + " tasks in the list.");
         } else if (chat.startsWith("deadline")) {
             String[] split = chat.split("/by ");
             String description = split[0].substring(9);
@@ -51,7 +51,7 @@ public class Xan {
             listArray.add(task);
             System.out.println("Got it. I've added this task:");
             System.out.println(task.toString());
-            System.out.println("Now you have " + listArray.size() + " task in the list.");
+            System.out.println("Now you have " + listArray.size() + " tasks in the list.");
         } else if (chat.startsWith("event")) {
             String[] split = chat.split("/from | /to ");
             String description = split[0].substring(6);
@@ -61,7 +61,7 @@ public class Xan {
             listArray.add(task);
             System.out.println("Got it. I've added this task:");
             System.out.println(task.toString());
-            System.out.println("Now you have " + listArray.size() + " task in the list.");
+            System.out.println("Now you have " + listArray.size() + " tasks in the list.");
         }
     }
 
