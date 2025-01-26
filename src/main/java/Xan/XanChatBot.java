@@ -1,3 +1,7 @@
+package Xan;
+
+import Xan.ui.Ui;
+
 import java.util.Scanner;
 
 public class XanChatBot {

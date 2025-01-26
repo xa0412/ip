@@ -1,10 +1,12 @@
+package Xan.ui;
+
 public class Ui {
 
     public Ui() {
     }
 
     public void welcomeMessage() {
-        System.out.println("Hello! I'm Xan! I am your personalized Task manager!");
+        System.out.println("Hello! I'm Xan! I am your personalized task manager!");
         System.out.println("Enter the following commands to get started:");
         System.out.println("  todo: tasks without any date/time attached to it. e.g. todo visit new theme park");
         System.out.println("  deadline: tasks that need to be done before a specific date/time. "
