@@ -1,6 +1,6 @@
-package Xan;
+package xan;
 
-import Xan.ui.Ui;
+import xan.ui.Ui;
 
 import java.util.Scanner;
 
@@ -9,11 +9,17 @@ public class XanChatBot {
     private final TaskManager taskManager;
     private final Ui ui;
 
+    /**
+     * Creates an instance of XanChatBot.
+     */
     public XanChatBot() {
         this.ui = new Ui();
         this.taskManager = new TaskManager(FILE_PATH);
     }
 
+    /**
+     * Run the main program.
+     */
     public void run() {
         ui.welcomeMessage();
         taskManager.loadTask();

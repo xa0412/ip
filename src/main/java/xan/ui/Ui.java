@@ -1,4 +1,4 @@
-package Xan.ui;
+package xan.ui;
 
 public class Ui {
 

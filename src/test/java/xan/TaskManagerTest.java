@@ -1,4 +1,4 @@
-package Xan;
+package xan;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,13 +1,17 @@
-package Xan;
+package xan;
 
-import Xan.exception.XanException;
-import Xan.ui.Ui;
-
+import xan.exception.XanException;
+import xan.ui.Ui;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * The TaskManager class manages a list of tasks, including creating, editing,
+ * marking, unmarking, deleting, saving, and loading tasks. It also provides functionality
+ * to display tasks to the user and supports different types of tasks such as Todo, Deadline, and Event.
+ */
 public class TaskManager {
     private static final ArrayList<Task> listArray = new ArrayList<>();
     private final String filePath;
@@ -21,6 +25,10 @@ public class TaskManager {
         this.filePath = null;
     }
 
+    /**
+     * Categorizes tasks as TODO, DEADLINE, or EVENT and provides utility for
+     * converting string representations.
+     */
     private enum TaskType {
         TODO, DEADLINE, EVENT;
 
@@ -34,6 +42,12 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Loads tasks from a file or creates a test Todo task if no file path is provided.
+     * Handles parsing for Todo, Deadline, and Event tasks and appropriate exceptions.
+     * @throws FileNotFoundException - If the specified file path does not exist.
+     * @throws IllegalArgumentException - If an unknown task type or invalid task format is encountered.
+     */
     public void loadTask() {
         if (filePath == null) {
             // Skip loading from file for tests; Use some hardcoded data
@@ -96,6 +110,15 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Saves the current list of tasks to a file. Handles exceptions for file not found
+     * or write errors.
+     * Exceptions handled:
+     * @throws IOException: If an error occurs while writing to the file, a RuntimeException is thrown
+     *   with an appropriate error message.
+     * @throws IllegalArgumentException: If the file does not exist, an exception is thrown with a message
+     *   indicating the invalid file path.
+     */
     public void saveTask() {
         if (filePath == null) {
             return;
@@ -120,6 +143,9 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Displays all tasks in the list, or a message if the list is empty.
+     */
     public void showList() {
         if (listArray.isEmpty()) {
             System.out.println("No tasks found");
@@ -132,6 +158,15 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Adds a task based on the input. Supports "todo", "deadline", and "event" tasks.
+     * Validates inputs and handles exceptions for invalid formats.
+     *
+     * @param chat Command string containing task type and details.
+     *
+     * @throws IllegalArgumentException If the task type is invalid or if the input string does not
+     *                                  match the required format for the specified task type.
+     */
     public void addList(String chat) throws IllegalArgumentException {
         String[] words = chat.split(" ", 2);
         if (words[0].equals("todo") || words[0].equals("deadline") || words[0].equals("event")) {
@@ -175,6 +210,11 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Marks a task as done based on its index from the input.
+     *
+     * @param chat Command string specifying the task index (e.g., "mark 1").
+     */
     public void markTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
@@ -184,6 +224,11 @@ public class TaskManager {
         saveTask();
     }
 
+    /**
+     * Unmarks a task as not done based on its index from the input.
+     *
+     * @param chat Command string specifying the task index (e.g., "unmark 1").
+     */
     public void unmarkTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
@@ -193,12 +238,22 @@ public class TaskManager {
         saveTask();
     }
 
+    /**
+     * Prints confirmation after adding a task, showing the total task count.
+     *
+     * @param task Task object being added.
+     */
     public void addTaskMessage(Task task) {
         System.out.println("Got it. I've added this task:");
         System.out.println(task);
         System.out.println("Now you have " + listArray.size() + " tasks in the list.");
     }
 
+    /**
+     * Deletes a task based on its index from the input and confirms the deletion.
+     *
+     * @param chat Command string specifying the task index (e.g., "delete 1").
+     */
     public void deleteTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
@@ -209,10 +264,20 @@ public class TaskManager {
         saveTask();
     }
 
+    /**
+     * Returns the number of tasks in the list.
+     */
     public int getListArraySize() {
         return listArray.size();
     }
 
+    /**
+     * Retrieves a task by index.
+     *
+     * @param index Index of the task to retrieve.
+     * @return Task object at the specified index.
+     * @throws IndexOutOfBoundsException If the index is out of range.
+     */
     public Task getTask(int index) {
         if (index < 0 || index >= listArray.size()) {
             throw new IndexOutOfBoundsException("Invalid task index: " + index);
