@@ -1,3 +1,5 @@
 [E][X] project meeting (from: Mon 2pm to: 4pm)
-[D][X] return book (by: Sunday)
-[T][X] borrow book
+[T][ ] borrow book
+[T][ ] read book
+[T][ ] visit new theme park
+[E][ ] project meeting (from: Mon 2pm to: 4pm)

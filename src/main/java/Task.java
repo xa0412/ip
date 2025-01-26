@@ -1,10 +1,21 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
     protected String description;
     protected boolean isDone;
+    protected LocalDate dateTime;
 
     public Task(String description) {
         this.description = description;
         this.isDone = false;
+        this.dateTime = null;
+    }
+
+    public Task(String description, LocalDate dateTime) {
+        this.description = description;
+        this.isDone = false;
+        this.dateTime = dateTime;
     }
 
     public String getStatusIcon() {
@@ -21,6 +32,11 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        String dateTimeString = (dateTime != null)
+                ? dateTime.format(DateTimeFormatter.ofPattern("MMM dd yyyy"))
+                : "";
+        return "[" + getStatusIcon() + "] " + description + (dateTime != null
+                ? " (by: " + dateTimeString + ")"
+                : "");
     }
 }
