@@ -1,10 +1,18 @@
 package xan.ui;
 
+/**
+ * The Ui class is responsible for interacting with the user, It handles welcome and
+ * goodbye messages to the user.
+ */
 public class Ui {
 
     public Ui() {
     }
 
+    /**
+     * Displays a welcome message to the user, introducing the chatbot and
+     * providing instructions on how to use its various features.
+     */
     public void welcomeMessage() {
         System.out.println("Hello! I'm Xan! I am your personalized task manager!");
         System.out.println("Enter the following commands to get started:");
@@ -20,6 +28,9 @@ public class Ui {
         System.out.println("What can I do for you?");
     }
 
+    /**
+     * Displays a goodbye message to the user.
+     */
     public void showGoodbyeMessage() {
         System.out.println("Goodbye! Have a nice day!");
     }
