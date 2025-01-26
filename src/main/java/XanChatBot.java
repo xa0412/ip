@@ -1,8 +1,9 @@
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Xan {
+public class XanChatBot {
     private static final ArrayList<Task> listArray = new ArrayList<>();
     private static final String FILE_PATH = "src/main/data/xan.txt";
 
@@ -71,8 +72,8 @@ public class Xan {
                     if (taskDetails.contains("(by: ")) {
                         String[] parts = taskDetails.split("\\(by: ");
                         String description = parts[0].trim();
-                        String deadline = parts[1].replace(")", "").trim();
-                        task = new Deadline(description, deadline);
+                        LocalDate date = LocalDate.parse(parts[1].replace(")", "").trim());
+                        task = new Deadline(description, date);
                     }
                     break;
                 case 'E':
@@ -155,7 +156,8 @@ public class Xan {
                     throw new XanException("A deadline task must have a '/by' clause!");
                 }
                 String[] deadlineParts = details.split("/by ", 2);
-                Task deadlineTask = new Deadline(deadlineParts[0].trim(), deadlineParts[1].trim());
+                LocalDate date = LocalDate.parse(deadlineParts[1].replace(")", "").trim());
+                Task deadlineTask = new Deadline(deadlineParts[0].trim(), date);
                 listArray.add(deadlineTask);
                 addTaskMessage(deadlineTask);
                 break;
@@ -205,7 +207,7 @@ public class Xan {
         System.out.println("Enter the following commands to get started:");
         System.out.println("  todo: tasks without any date/time attached to it. e.g. todo visit new theme park");
         System.out.println("  deadline: tasks that need to be done before a specific date/time. "
-                + "e.g. deadline return book /by Sunday");
+                + "e.g. deadline return book /by 2019-12-01");
         System.out.println("  event: tasks that start at a specific date/time and ends at a specific date/time. "
                 + "e.g. event project meeting /from Mon 2pm /to 4pm");
         System.out.println("  delete: to delete task. e.g. deleted 1");
