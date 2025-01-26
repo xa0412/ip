@@ -17,6 +17,10 @@ public class TaskManager {
         this.filePath = filePath;
     }
 
+    public TaskManager() {
+        this.filePath = null;
+    }
+
     private enum TaskType {
         TODO, DEADLINE, EVENT;
 
@@ -31,6 +35,13 @@ public class TaskManager {
     }
 
     public void loadTask() {
+        if (filePath == null) {
+            // Skip loading from file for tests; Use some hardcoded data
+            // For testing purposes, add a sample task manually:
+            listArray.add(new Todo("todo Read a book"));
+            return;
+        }
+
         try {
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
@@ -86,6 +97,10 @@ public class TaskManager {
     }
 
     public void saveTask() {
+        if (filePath == null) {
+            return;
+        }
+
         try {
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
@@ -192,5 +207,16 @@ public class TaskManager {
         listArray.remove(taskIndex);
         System.out.println("Now you have " + listArray.size() + " tasks in the list.");
         saveTask();
+    }
+
+    public int getListArraySize() {
+        return listArray.size();
+    }
+
+    public Task getTask(int index) {
+        if (index < 0 || index >= listArray.size()) {
+            throw new IndexOutOfBoundsException("Invalid task index: " + index);
+        }
+        return listArray.get(index);
     }
 }
