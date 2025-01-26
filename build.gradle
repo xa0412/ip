@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'application'
 }
-mainClassName = 'Xan.XanChatBot'
+mainClassName = 'xan.XanChatBot'
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ test {
 }
 
 application {
-    mainClass.set("Xan.XanChatBot")
+    mainClass.set("xan.XanChatBot")
 }
 
 shadowJar {

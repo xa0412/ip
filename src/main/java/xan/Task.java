@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
  * Serves as a base class for specific task types like Todo, Deadline, and Event.
  */
 public class Task {
-    protected String description;
+    protected final String description;
     protected boolean isDone;
-    protected LocalDate date;
+    protected final LocalDate date;
 
     /**
      * Creates a task with the given description.
@@ -57,6 +57,15 @@ public class Task {
      */
     public void markAsNotDone() {
         this.isDone = false;
+    }
+
+    /**
+     * Returns the description of the task.
+     *
+     * @return The task's description as a string.
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**

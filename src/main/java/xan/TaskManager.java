@@ -2,6 +2,7 @@ package xan;
 
 import xan.exception.XanException;
 import xan.ui.Ui;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -283,5 +284,35 @@ public class TaskManager {
             throw new IndexOutOfBoundsException("Invalid task index: " + index);
         }
         return listArray.get(index);
+    }
+
+    /**
+     * Searches for tasks in the list that contain the given keyword in their description.
+     * If no keyword is provided or the keyword is empty, prompts the user to provide a valid keyword.
+     * Displays all matching tasks or a message if no tasks are found.
+     *
+     * @param chat The command string containing the search keyword (e.g., "search keyword").
+     */
+    public void searchTask(String chat) {
+        String[] splitWord = chat.split(" ", 2);
+        if (splitWord.length < 2 || splitWord[1].trim().isEmpty()) {
+            System.out.println("Please provide a keyword to search.");
+            return;
+        }
+        String keyWord = splitWord[1].trim();
+        System.out.println("Here are the matching tasks in your list:");
+        boolean found = false;
+        int displaySearchIndex = 1;
+        for (int i = 0; i < listArray.size(); i++) {
+            Task task = listArray.get(i);
+            if (task.getDescription().toLowerCase().contains(keyWord.toLowerCase())) {
+                System.out.println((displaySearchIndex) + "." + task);
+                displaySearchIndex++;
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No matching tasks found.");
+        }
     }
 }

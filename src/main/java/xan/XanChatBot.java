@@ -39,6 +39,8 @@ public class XanChatBot {
                     taskManager.unmarkTask(chat);
                 } else if (chat.startsWith("delete")) {
                     taskManager.deleteTask(chat);
+                } else if (chat.startsWith("search")) {
+                    taskManager.searchTask(chat);
                 } else {
                     taskManager.addList(chat);
                 }
