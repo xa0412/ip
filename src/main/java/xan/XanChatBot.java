@@ -1,13 +1,16 @@
 package xan;
 
-import xan.ui.Ui;
+import task.TaskManager;
+import ui.Ui;
 
-import java.util.Scanner;
-
+/**
+ * Represents the main chatbot program.
+ */
 public class XanChatBot {
-    private static final String FILE_PATH = "src/main/data/xan.txt";
+    private static final String FILE_PATH = "src/main/resources/data/xan.txt";
     private final TaskManager taskManager;
     private final Ui ui;
+    private boolean isExit;
 
     /**
      * Creates an instance of XanChatBot.
@@ -15,42 +18,51 @@ public class XanChatBot {
     public XanChatBot() {
         this.ui = new Ui();
         this.taskManager = new TaskManager(FILE_PATH);
+        this.isExit = false;
+        taskManager.loadTask();
+    }
+    /**
+     * Returns the welcome message.
+     *
+     * @return The welcome message.
+     */
+    public String getWelcomeMessage() {
+        return ui.getWelcomeMessage();
+    }
+
+    public boolean isExit() {
+        return isExit;
     }
 
     /**
-     * Run the main program.
+     * Returns the response to the user input.
+     *
+     * @param input The user input.
+     * @return The response to the user input.
      */
-    public void run() {
-        ui.welcomeMessage();
-        taskManager.loadTask();
-        Scanner sc = new Scanner(System.in);
-
-        while (true) {
-            try {
-                String chat = sc.nextLine().trim();
-                if (chat.equals("bye")) {
-                    ui.showGoodbyeMessage();
-                    break;
-                } else if (chat.equals("list")) {
-                    taskManager.showList();
-                } else if (chat.startsWith("mark")) {
-                    taskManager.markTask(chat);
-                } else if (chat.startsWith("unmark")) {
-                    taskManager.unmarkTask(chat);
-                } else if (chat.startsWith("delete")) {
-                    taskManager.deleteTask(chat);
-                } else if (chat.startsWith("search")) {
-                    taskManager.searchTask(chat);
-                } else {
-                    taskManager.addList(chat);
-                }
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
+    public String getResponse(String input) {
+        input = input.trim();
+        try {
+            if (input.equals("bye")) {
+                isExit = true;
+                return ui.getGoodbyeMessage();
+            } else if (input.equals("list")) {
+                return taskManager.showList();
+            } else if (input.startsWith("mark")) {
+                return taskManager.markTask(input);
+            } else if (input.startsWith("unmark")) {
+                return taskManager.unmarkTask(input);
+            } else if (input.startsWith("delete")) {
+                return taskManager.deleteTask(input);
+            } else if (input.startsWith("search")) {
+                return taskManager.searchTask(input);
+            } else if (input.startsWith("todo") || input.startsWith("deadline") || input.startsWith("event")) {
+                return taskManager.addTask(input);
+            } else {
+                throw new IllegalArgumentException("I'm sorry, but I don't know what that means, please try again.");
             }
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
         }
-    }
-
-    public static void main(String[] args) {
-        new XanChatBot().run();
     }
 }

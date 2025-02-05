@@ -1,4 +1,4 @@
-package xan.exception;
+package exception;
 
 /**
  * Represents a custom exception for validation errors in task inputs.

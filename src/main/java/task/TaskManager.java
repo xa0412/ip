@@ -1,4 +1,4 @@
-package xan;
+package task;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,35 +10,33 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import exception.XanException;
-import ui.Ui;
 
 /**
- * The TaskManager class manages a list of tasks, including creating, editing,
- * marking, unmarking, deleting, saving, and loading tasks. It also provides functionality
+ * The TaskManager class manages a list of tasks for the user.It provides functionality
  * to display tasks to the user and supports different types of tasks such as Todo, Deadline, and Event.
  */
 public class TaskManager {
     private static final ArrayList<Task> listArray = new ArrayList<>();
     private final String filePath;
-    private Ui ui;
 
     public TaskManager(String filePath) {
         this.filePath = filePath;
     }
-
+    /**
+     * Constructor for test.java.task.taskManager.
+     */
     public TaskManager() {
         this.filePath = null;
     }
 
     /**
-     * Categorizes tasks as TODO, DEADLINE, or EVENT and provides utility for
-     * converting string representations.
+     * Enum to represent the different types of tasks supported by the TaskManager.
      */
     private enum TaskType {
         TODO, DEADLINE, EVENT;
 
         public static TaskType fromString(String input) {
-            return switch (input.toLowerCase()) {
+            return switch (input.toLowerCase().trim()) {
                 case "todo" -> TODO;
                 case "deadline" -> DEADLINE;
                 case "event" -> EVENT;
@@ -48,19 +46,11 @@ public class TaskManager {
     }
 
     /**
-     * Loads tasks from a file or creates a test Todo task if no file path is provided.
+     * Loads tasks from a file and adds them to the list.
      * Handles parsing for Todo, Deadline, and Event tasks and appropriate exceptions.
-     * @throws FileNotFoundException - If the specified file path does not exist.
      * @throws IllegalArgumentException - If an unknown task type or invalid task format is encountered.
      */
     public void loadTask() {
-        if (filePath == null) {
-            // Skip loading from file for tests; Use some hardcoded data
-            // For testing purposes, add a sample task manually:
-            listArray.add(new Todo("todo Read a book"));
-            return;
-        }
-
         try {
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
@@ -119,16 +109,10 @@ public class TaskManager {
      * Saves the current list of tasks to a file. Handles exceptions for file not found
      * or write errors.
      * Exceptions handled:
-     * @throws IOException: If an error occurs while writing to the file, a RuntimeException is thrown
-     *   with an appropriate error message.
      * @throws IllegalArgumentException: If the file does not exist, an exception is thrown with a message
      *   indicating the invalid file path.
      */
     public void saveTask() {
-        if (filePath == null) {
-            return;
-        }
-
         try {
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
@@ -149,7 +133,10 @@ public class TaskManager {
     }
 
     /**
-     * Displays all tasks in the list, or a message if the list is empty.
+     * Returns a string representation of all tasks in the list.
+     * If the list is empty, it returns "No tasks found".
+     *
+     * @return A string containing the list of tasks or a message if empty.
      */
     public String showList() {
         if (listArray.isEmpty()) {
@@ -166,92 +153,102 @@ public class TaskManager {
     }
 
     /**
-     * Adds a task based on the input. Supports "todo", "deadline", and "event" tasks.
-     * Validates inputs and handles exceptions for invalid formats.
+     * Adds a task to the list based on the given input string.
+     * Supports "todo", "deadline", and "event" tasks.
      *
-     * @param chat Command string containing task type and details.
-     *
-     * @throws IllegalArgumentException If the task type is invalid or if the input string does not
-     *                                  match the required format for the specified task type.
+     * @param chat The input string containing the task type and details.
+     * @return A confirmation message after adding the task.
+     * @throws IllegalArgumentException If the task type is invalid.
+     * @throws XanException If the task description is missing or incorrectly formatted.
      */
-    public String addList(String chat) throws IllegalArgumentException {
+    public String addTask(String chat) throws IllegalArgumentException {
         String[] words = chat.split(" ", 2);
-        if (words[0].equals("todo") || words[0].equals("deadline") || words[0].equals("event")) {
-            if (words.length < 2) {
-                throw new XanException("The description of a task cannot be empty!");
-            }
-
-            TaskType taskType = TaskType.fromString(words[0]);
-            String details = words[1];
-            Task task = null;
-
-            switch (taskType) {
-            case TODO:
-                task = new Todo(details);
-                break;
-
-            case DEADLINE:
-                if (!details.contains("/by ")) {
-                    throw new XanException("A deadline task must have a '/by' clause!");
-                }
-                String[] deadlineParts = details.split("/by ", 2);
-                LocalDate date = LocalDate.parse(deadlineParts[1].replace(")", "").trim());
-                task = new Deadline(deadlineParts[0].trim(), date);
-                break;
-
-            case EVENT:
-                if (!details.contains("/from ") || !details.contains("/to ")) {
-                    throw new XanException("An event task must have both '/from' and '/to' clauses!");
-                }
-                String[] eventParts = details.split("/from | /to ");
-                task = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
-                break;
-            }
-            listArray.add(task);
-            saveTask();
-            return addTaskMessage(task);
-        } else {
-            throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline',"
-                    + " 'event', 'delete'," + " 'list', 'mark', 'unmark'.");
+        if (words.length < 2) {
+            throw new XanException("The description of a task cannot be empty!");
         }
+
+        TaskType taskType = TaskType.fromString(words[0]);
+        String details = words[1];
+        Task task = null;
+
+        switch (taskType) {
+        case TODO:
+            task = new Todo(details);
+            break;
+        case DEADLINE:
+            if (!details.contains("/by ")) {
+                throw new XanException("A deadline task must have a '/by' clause!");
+            }
+            String[] deadlineParts = details.split("/by ", 2);
+            LocalDate date = LocalDate.parse(deadlineParts[1].replace(")", "").trim());
+            task = new Deadline(deadlineParts[0].trim(), date);
+            break;
+        case EVENT:
+            if (!details.contains("/from ") || !details.contains("/to ")) {
+                throw new XanException("An event task must have both '/from' and '/to' clauses!");
+            }
+            String[] eventParts = details.split("/from | /to ");
+            task = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline', "
+                    + "'event', 'delete', 'list', 'mark', or 'unmark'.");
+        }
+        listArray.add(task);
+        saveTask();
+        return addTaskMessage(task);
     }
 
     /**
-     * Marks a task as done based on its index from the input.
+     * Marks a specified task as done based on the user input.
+     * Handles invalid input formats and out-of-range task indices gracefully.
      *
-     * @param chat Command string specifying the task index (e.g., "mark 1").
+     * @param chat The user input containing the task number to be marked as done.
+     * @return A confirmation message if the task is successfully marked,
+     *         or an error message if the input is invalid.
      */
     public String markTask(String chat) {
-        int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-        Task task = listArray.get(taskIndex);
-        task.markAsDone();
-
-        String message = "Nice! I've marked this task as done:\n" + (
-                taskIndex + 1) + "." + task.toString() + "\n";
-        saveTask();
-        return message;
+        try {
+            int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
+                return "Invalid task number! Please enter a valid task index.";
+            }
+            Task task = listArray.get(taskIndex);
+            task.markAsDone();
+            saveTask();
+            return "Nice! I've marked this task as done:\n" + (taskIndex + 1) + ". " + task + "\n";
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return "Invalid input! Please enter a valid task number.";
+        }
     }
 
     /**
      * Unmarks a task as not done based on its index from the input.
      *
-     * @param chat Command string specifying the task index (e.g., "unmark 1").
+     * @param chat The user input containing the task number to be unmarked (e.g., "unmark 1").
+     * @return A confirmation message if the task is successfully unmarked,
+     *         or an error message if the input is invalid.
      */
     public String unmarkTask(String chat) {
-        int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-        Task task = listArray.get(taskIndex);
-        task.markAsNotDone();
-
-        String message = "Ok, I've marked this task as not done:\n" + (
-                taskIndex + 1) + "." + task.toString() + "\n";
-        saveTask();
-        return message;
+        try {
+            int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
+                return "Invalid task number! Please enter a valid task index.";
+            }
+            Task task = listArray.get(taskIndex);
+            task.markAsNotDone();
+            saveTask();
+            return "Ok, I've marked this task as not done:\n" + (taskIndex + 1) + ". " + task + "\n";
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return "Invalid input! Please enter a valid task number.";
+        }
     }
 
     /**
      * Prints confirmation after adding a task, showing the total task count.
      *
-     * @param task Task object being added.
+     * @param task The Task object that was added.
+     * @return A string containing a message with the task details and updated task count.
      */
     public String addTaskMessage(Task task) {
         return "Got it. I've added this task:\n"
@@ -263,19 +260,28 @@ public class TaskManager {
      * Deletes a task based on its index from the input and confirms the deletion.
      *
      * @param chat Command string specifying the task index (e.g., "delete 1").
+     * @return A string confirming the deletion, showing the removed task and the updated task count.
+     * @throws IndexOutOfBoundsException If the task index is invalid (e.g., out of range).
      */
     public String deleteTask(String chat) {
-        int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-        Task task = listArray.get(taskIndex);
+        try {
+            int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
+                return "Invalid task index. Please provide a valid task number for task deletion.";
+            }
+            Task task = listArray.get(taskIndex);
 
-        StringBuilder message = new StringBuilder();
-        message.append("Noted. I've removed this task:\n");
-        message.append(taskIndex + 1).append(".").append(task.toString()).append("\n");
+            StringBuilder message = new StringBuilder();
+            message.append("Noted. I've removed this task:\n");
+            message.append(taskIndex + 1).append(".").append(task.toString()).append("\n");
 
-        listArray.remove(taskIndex);
-        message.append("Now you have ").append(listArray.size()).append(" tasks in the list.\n");
-        saveTask();
-        return message.toString();
+            listArray.remove(taskIndex);
+            message.append("Now you have ").append(listArray.size()).append(" tasks in the list.\n");
+            saveTask();
+            return message.toString();
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            return "Invalid input. Please provide a valid task index, e.g., 'delete 1'.";
+        }
     }
 
     /**

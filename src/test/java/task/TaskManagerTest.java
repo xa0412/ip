@@ -1,13 +1,20 @@
-package xan;
+package task;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import task.TaskManager;
 
-import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Tests the TaskManager class.
+ */
 public class TaskManagerTest {
 
-    // Test one function at a time to get the correct index
+    // [IMPORTANT] Test one function at a time to get the correct index
+    /**
+     * Tests adding a todo task to the list.
+     */
     @Test
     public void testAddTodoTask() {
         TaskManager taskManager = new TaskManager();
@@ -16,7 +23,9 @@ public class TaskManagerTest {
         assertEquals(1, taskManager.getListArraySize());
         assertEquals("[T][ ] Read a book", taskManager.getTask(0).toString());
     }
-    /*
+    /**
+     * Tests adding an event task to the list.
+     */
     @Test
     public void testAddEventTask() {
         TaskManager taskManager1 = new TaskManager();
@@ -25,6 +34,5 @@ public class TaskManagerTest {
         assertEquals(1, taskManager1.getListArraySize());
         assertEquals("[E][ ] Attend meeting (from: 10am to: 11am)", taskManager1.getTask(0).toString());
     }
-    */
 }
 

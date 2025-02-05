@@ -1,13 +1,10 @@
-package xan.ui;
+package ui;
 
 /**
  * The Ui class is responsible for interacting with the user, It handles welcome and
  * goodbye messages to the user.
  */
 public class Ui {
-
-    public Ui() {
-    }
 
     /**
      * Displays a welcome message to the user, introducing the chatbot and

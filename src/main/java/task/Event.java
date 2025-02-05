@@ -1,4 +1,4 @@
-package xan;
+package task;
 
 /**
  * A task representing an event with a description, start time, and end time.

@@ -1,4 +1,4 @@
-package xan;
+package task;
 
 /**
  * Represents a simple task with a description
