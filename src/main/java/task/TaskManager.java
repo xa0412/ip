@@ -1,12 +1,16 @@
 package xan;
 
-import xan.exception.XanException;
-import xan.ui.Ui;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import exception.XanException;
+import ui.Ui;
 
 /**
  * The TaskManager class manages a list of tasks, including creating, editing,
@@ -147,15 +151,17 @@ public class TaskManager {
     /**
      * Displays all tasks in the list, or a message if the list is empty.
      */
-    public void showList() {
+    public String showList() {
         if (listArray.isEmpty()) {
-            System.out.println("No tasks found");
+            return "No tasks found";
         } else {
-            System.out.println("Here are the tasks in your list:");
+            StringBuilder result = new StringBuilder();
+            result.append("Here are the tasks in your list:\n");
             for (int i = 0; i < listArray.size(); i++) {
                 Task task = listArray.get(i);
-                System.out.println((i + 1) + "." + task.toString());
+                result.append((i + 1)).append(". ").append(task.toString()).append("\n");
             }
+            return result.toString();
         }
     }
 
@@ -168,7 +174,7 @@ public class TaskManager {
      * @throws IllegalArgumentException If the task type is invalid or if the input string does not
      *                                  match the required format for the specified task type.
      */
-    public void addList(String chat) throws IllegalArgumentException {
+    public String addList(String chat) throws IllegalArgumentException {
         String[] words = chat.split(" ", 2);
         if (words[0].equals("todo") || words[0].equals("deadline") || words[0].equals("event")) {
             if (words.length < 2) {
@@ -177,37 +183,36 @@ public class TaskManager {
 
             TaskType taskType = TaskType.fromString(words[0]);
             String details = words[1];
+            Task task = null;
 
             switch (taskType) {
             case TODO:
-                Task todoTask = new Todo(details);
-                listArray.add(todoTask);
-                addTaskMessage(todoTask);
+                task = new Todo(details);
                 break;
+
             case DEADLINE:
                 if (!details.contains("/by ")) {
                     throw new XanException("A deadline task must have a '/by' clause!");
                 }
                 String[] deadlineParts = details.split("/by ", 2);
                 LocalDate date = LocalDate.parse(deadlineParts[1].replace(")", "").trim());
-                Task deadlineTask = new Deadline(deadlineParts[0].trim(), date);
-                listArray.add(deadlineTask);
-                addTaskMessage(deadlineTask);
+                task = new Deadline(deadlineParts[0].trim(), date);
                 break;
+
             case EVENT:
                 if (!details.contains("/from ") || !details.contains("/to ")) {
                     throw new XanException("An event task must have both '/from' and '/to' clauses!");
                 }
                 String[] eventParts = details.split("/from | /to ");
-                Task eventTask = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
-                listArray.add(eventTask);
-                addTaskMessage(eventTask);
+                task = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
                 break;
             }
+            listArray.add(task);
             saveTask();
+            return addTaskMessage(task);
         } else {
-            throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline'," +
-                    " 'event', 'delete'," + " 'list', 'mark', 'unmark'.");
+            throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline',"
+                    + " 'event', 'delete'," + " 'list', 'mark', 'unmark'.");
         }
     }
 
@@ -216,13 +221,15 @@ public class TaskManager {
      *
      * @param chat Command string specifying the task index (e.g., "mark 1").
      */
-    public void markTask(String chat) {
+    public String markTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
         task.markAsDone();
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println((taskIndex + 1) + "." + task.toString());
+
+        String message = "Nice! I've marked this task as done:\n" + (
+                taskIndex + 1) + "." + task.toString() + "\n";
         saveTask();
+        return message;
     }
 
     /**
@@ -230,13 +237,15 @@ public class TaskManager {
      *
      * @param chat Command string specifying the task index (e.g., "unmark 1").
      */
-    public void unmarkTask(String chat) {
+    public String unmarkTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
         task.markAsNotDone();
-        System.out.println("Ok, I've marked this task as not done:");
-        System.out.println((taskIndex + 1) + "." + task.toString());
+
+        String message = "Ok, I've marked this task as not done:\n" + (
+                taskIndex + 1) + "." + task.toString() + "\n";
         saveTask();
+        return message;
     }
 
     /**
@@ -244,10 +253,10 @@ public class TaskManager {
      *
      * @param task Task object being added.
      */
-    public void addTaskMessage(Task task) {
-        System.out.println("Got it. I've added this task:");
-        System.out.println(task);
-        System.out.println("Now you have " + listArray.size() + " tasks in the list.");
+    public String addTaskMessage(Task task) {
+        return "Got it. I've added this task:\n"
+                + task.toString() + "\n"
+                + "Now you have " + listArray.size() + " tasks in the list.";
     }
 
     /**
@@ -255,14 +264,18 @@ public class TaskManager {
      *
      * @param chat Command string specifying the task index (e.g., "delete 1").
      */
-    public void deleteTask(String chat) {
+    public String deleteTask(String chat) {
         int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
         Task task = listArray.get(taskIndex);
-        System.out.println("Noted. I've remove this task:");
-        System.out.println((taskIndex + 1) + "." + task.toString());
+
+        StringBuilder message = new StringBuilder();
+        message.append("Noted. I've removed this task:\n");
+        message.append(taskIndex + 1).append(".").append(task.toString()).append("\n");
+
         listArray.remove(taskIndex);
-        System.out.println("Now you have " + listArray.size() + " tasks in the list.");
+        message.append("Now you have ").append(listArray.size()).append(" tasks in the list.\n");
         saveTask();
+        return message.toString();
     }
 
     /**
@@ -293,26 +306,28 @@ public class TaskManager {
      *
      * @param chat The command string containing the search keyword (e.g., "search keyword").
      */
-    public void searchTask(String chat) {
+    public String searchTask(String chat) {
         String[] splitWord = chat.split(" ", 2);
         if (splitWord.length < 2 || splitWord[1].trim().isEmpty()) {
-            System.out.println("Please provide a keyword to search.");
-            return;
+            return "Please provide a keyword to search.";
         }
         String keyWord = splitWord[1].trim();
-        System.out.println("Here are the matching tasks in your list:");
+
+        StringBuilder message = new StringBuilder();
+        message.append("Here are the matching tasks in your list:\n");
+
         boolean found = false;
         int displaySearchIndex = 1;
-        for (int i = 0; i < listArray.size(); i++) {
-            Task task = listArray.get(i);
+        for (Task task : listArray) {
             if (task.getDescription().toLowerCase().contains(keyWord.toLowerCase())) {
-                System.out.println((displaySearchIndex) + "." + task);
+                message.append(displaySearchIndex).append(".").append(task).append("\n");
                 displaySearchIndex++;
                 found = true;
             }
         }
         if (!found) {
-            System.out.println("No matching tasks found.");
+            message.append("No matching tasks found.\n");
         }
+        return message.toString();
     }
 }

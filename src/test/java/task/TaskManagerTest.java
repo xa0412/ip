@@ -1,6 +1,8 @@
 package xan;
 
 import org.junit.jupiter.api.Test;
+import task.TaskManager;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskManagerTest {
