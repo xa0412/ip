@@ -4,8 +4,8 @@ package task;
  * A task representing an event with a description, start time, and end time.
  */
 public class Event extends Task {
-    protected String startTime;
-    protected String endTime;
+    private final String startTime;
+    private final String endTime;
 
     /**
      * Creates an Event task with a description, start time, and end time.
