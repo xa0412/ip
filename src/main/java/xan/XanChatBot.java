@@ -49,7 +49,7 @@ public class XanChatBot {
                 isExit = true;
                 return ui.getGoodbyeMessage();
             } else if (input.equals("list")) {
-                return taskManager.showList();
+                return taskManager.showTask();
             } else if (input.startsWith("mark")) {
                 return taskManager.markTask(input);
             } else if (input.startsWith("unmark")) {

@@ -36,12 +36,11 @@ public class TaskManager {
         TODO, DEADLINE, EVENT;
 
         public static TaskType fromString(String input) {
-            return switch (input.toLowerCase().trim()) {
-                case "todo" -> TODO;
-                case "deadline" -> DEADLINE;
-                case "event" -> EVENT;
-                default -> throw new IllegalArgumentException("Unknown task type: " + input);
-            };
+            try {
+                return TaskType.valueOf(input.toUpperCase().trim());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Unknown task type: " + input);
+            }
         }
     }
 
@@ -113,8 +112,8 @@ public class TaskManager {
      * Saves the current list of tasks to a file. Handles exceptions for file not found
      * or write errors.
      * Exceptions handled:
-     * @throws IllegalArgumentException: If the file does not exist, an exception is thrown with a message
-     *   indicating the invalid file path.
+     * @throws IllegalArgumentException - If the file does not exist,
+     *     an exception is thrown with a message indicating the invalid file path.
      */
     public void saveTask() {
         try {
@@ -143,18 +142,15 @@ public class TaskManager {
      *
      * @return A string containing the list of tasks or a message if empty.
      */
-    public String showList() {
+    public String showTask() {
         if (listArray.isEmpty()) {
             return "No tasks found";
-        } else {
-            StringBuilder result = new StringBuilder();
-            result.append("Here are the tasks in your list:\n");
-            for (int i = 0; i < listArray.size(); i++) {
-                Task task = listArray.get(i);
-                result.append((i + 1)).append(". ").append(task.toString()).append("\n");
-            }
-            return result.toString();
         }
+        StringBuilder result = new StringBuilder("Here are the tasks in your list:\n");
+        for (int i = 0; i < listArray.size(); i++) {
+            result.append(i + 1).append(". ").append(listArray.get(i)).append("\n");
+        }
+        return result.toString();
     }
 
     /**
@@ -174,7 +170,7 @@ public class TaskManager {
 
         TaskType taskType = TaskType.fromString(words[0]);
         String details = words[1];
-        Task task = null;
+        Task task;
 
         switch (taskType) {
         case TODO:
@@ -322,18 +318,17 @@ public class TaskManager {
         if (splitWord.length < 2 || splitWord[1].trim().isEmpty()) {
             return "Please provide a keyword to search.";
         }
-        String keyWord = splitWord[1].trim();
 
+        String keyWord = splitWord[1].trim();
         StringBuilder message = new StringBuilder();
         message.append("Here are the matching tasks in your list:\n");
-
         boolean found = false;
         int displaySearchIndex = 1;
         for (Task task : listArray) {
             if (task.getDescription().toLowerCase().contains(keyWord.toLowerCase())) {
                 message.append(displaySearchIndex).append(".").append(task).append("\n");
-                displaySearchIndex++;
                 found = true;
+                displaySearchIndex++;
             }
         }
         if (!found) {
