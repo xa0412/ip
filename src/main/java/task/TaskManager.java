@@ -52,6 +52,7 @@ public class TaskManager {
      */
     public void loadTask() {
         try {
+            assert filePath != null;
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
                 throw new FileNotFoundException(filePath);
@@ -72,6 +73,7 @@ public class TaskManager {
                     break;
                 case 'D':
                     if (taskDetails.contains("(by: ")) {
+                        assert taskDetails.contains("(by: ") : "Deadline task should contain (by: clause";
                         String[] parts = taskDetails.split("\\(by: ");
                         String description = parts[0].trim();
                         LocalDate date = LocalDate.parse(parts[1].replace(")", "").trim());
@@ -80,6 +82,8 @@ public class TaskManager {
                     break;
                 case 'E':
                     if (taskDetails.contains("(from: ") && taskDetails.contains("to: ")) {
+                        assert taskDetails.contains("(from: ") && taskDetails.contains("to: ")
+                                : "Event task should contain (from: and to: clauses";
                         String[] parts = taskDetails.split("(\\(from: )| (to: )");
                         String description = parts[0].trim();
                         String startTime = parts[1].trim();
@@ -114,6 +118,7 @@ public class TaskManager {
      */
     public void saveTask() {
         try {
+            assert filePath != null;
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
                 throw new IllegalArgumentException("The file could not be found: " + filePath);

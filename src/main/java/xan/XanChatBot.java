@@ -41,7 +41,9 @@ public class XanChatBot {
      * @return The response to the user input.
      */
     public String getResponse(String input) {
+        assert taskManager != null : "TaskManager should be initialized";
         input = input.trim();
+        assert !input.isEmpty() : "Input should not be empty";
         try {
             if (input.equals("bye")) {
                 isExit = true;
