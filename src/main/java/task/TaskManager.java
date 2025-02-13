@@ -268,7 +268,7 @@ public class TaskManager {
         try {
             int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
             if (taskIndex < 0 || taskIndex >= LIST_ARRAY.size()) {
-                return "Invalid task index. Please provide a valid task number for task deletion.";
+                return "Invalid task index! Please provide a valid task number for task deletion.";
             }
             Task task = LIST_ARRAY.get(taskIndex);
 
@@ -281,7 +281,7 @@ public class TaskManager {
             saveTask();
             return message.toString();
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            return "Invalid input. Please provide a valid task index, e.g., 'delete 1'.";
+            return "Invalid input! Please provide a valid task index, e.g., 'delete 1'.";
         }
     }
 
@@ -316,7 +316,7 @@ public class TaskManager {
     public String searchTask(String chat) {
         String[] splitWord = chat.split(" ", 2);
         if (splitWord.length < 2 || splitWord[1].trim().isEmpty()) {
-            return "Please provide a keyword to search.";
+            return "Please provide a keyword to search!";
         }
 
         String keyWord = splitWord[1].trim();
