@@ -43,11 +43,12 @@ public class XanChatBot {
     public String getResponse(String input) {
         assert taskManager != null : "TaskManager should be initialized!";
         input = input.trim();
-        assert !input.isEmpty() : "Input should not be empty!";
         try {
             if (input.equals("bye")) {
                 isExit = true;
                 return ui.getGoodbyeMessage();
+            } else if (input.equals("help")) {
+                return ui.getHelpMessage();
             } else if (input.equals("list")) {
                 return taskManager.showTask();
             } else if (input.startsWith("mark")) {

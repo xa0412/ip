@@ -117,7 +117,6 @@ public class TaskManager {
      */
     public void saveTask() {
         try {
-            assert filePath != null;
             File inputFile = new File(filePath);
             if (!inputFile.exists()) {
                 throw new IllegalArgumentException("The file could not be found: " + filePath);
