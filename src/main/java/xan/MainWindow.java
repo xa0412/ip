@@ -61,10 +61,15 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getDukeDialog(response, xanImage)
         );
         userInput.clear();
+        // @@ author xa0412-reused
+        // Reused https://github.com/nus-cs2103-AY2425S2/ip/pull/8/files
+        // #diff-fa25c50aec4546ddcaa1a91569bb7a23856803a8ea90903105f4ae8c4c248aa9R71-R75
+        // with minor modifications
         if (xan.isExit()) {
             PauseTransition wait = new PauseTransition(Duration.seconds(2));
             wait.setOnFinished(event -> Platform.exit());
             wait.play();
         }
+        // @@ author
     }
 }
