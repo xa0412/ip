@@ -26,8 +26,8 @@ public class MainWindow extends AnchorPane {
 
     private XanChatBot xan;
 
-    private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
-    private final Image xanImage = new Image(this.getClass().getResourceAsStream("/images/DaDuke.png"));
+    private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
+    private final Image xanImage = new Image(this.getClass().getResourceAsStream("/images/Xan.png"));
 
     @FXML
     public void initialize() {
