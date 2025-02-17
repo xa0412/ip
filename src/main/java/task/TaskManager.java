@@ -49,7 +49,7 @@ public class TaskManager {
      * Handles parsing for Todo, Deadline, and Event tasks and appropriate exceptions.
      * @throws IllegalArgumentException - If an unknown task type or invalid task format is encountered.
      */
-    public void loadTask() {
+    public void loadTaskFromFile() {
         try {
             assert filePath != null;
             File inputFile = new File(filePath);
@@ -322,16 +322,16 @@ public class TaskManager {
         String keyWord = splitWord[1].trim();
         StringBuilder message = new StringBuilder();
         message.append("Here are the matching tasks in your list:\n");
-        boolean found = false;
+        boolean isFound = false;
         int displaySearchIndex = 1;
         for (Task task : LIST_ARRAY) {
             if (task.getDescription().toLowerCase().contains(keyWord.toLowerCase())) {
                 message.append(displaySearchIndex).append(".").append(task).append("\n");
-                found = true;
+                isFound = true;
                 displaySearchIndex++;
             }
         }
-        if (!found) {
+        if (!isFound) {
             message.append("No matching tasks found.\n");
         }
         return message.toString();

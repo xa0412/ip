@@ -19,7 +19,7 @@ public class XanChatBot {
         this.ui = new Ui();
         this.taskManager = new TaskManager(FILE_PATH);
         this.isExit = false;
-        taskManager.loadTask();
+        taskManager.loadTaskFromFile();
     }
     /**
      * Returns the welcome message.
