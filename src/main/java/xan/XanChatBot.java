@@ -62,7 +62,8 @@ public class XanChatBot {
             } else if (input.startsWith("todo") || input.startsWith("deadline") || input.startsWith("event")) {
                 return taskManager.addTask(input);
             } else {
-                throw new IllegalArgumentException("I'm sorry, but I don't know what that means, please try again.");
+                throw new IllegalArgumentException("please input the correct command, "
+                        + "press help to see the list of commands");
             }
         } catch (IllegalArgumentException e) {
             return e.getMessage();
