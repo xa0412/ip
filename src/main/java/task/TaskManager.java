@@ -17,7 +17,7 @@ import exception.XanException;
  * to display tasks to the user and supports different types of tasks such as Todo, Deadline, and Event.
  */
 public class TaskManager {
-    private static final ArrayList<Task> LIST_ARRAY = new ArrayList<>();
+    private final ArrayList<Task> LIST_ARRAY = new ArrayList<>();
     private final String filePath;
 
     public TaskManager(String filePath) {

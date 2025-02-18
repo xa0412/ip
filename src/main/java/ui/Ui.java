@@ -8,27 +8,26 @@ package ui;
 public class Ui {
 
     /**
-     * Displays a welcome message to the user, introducing the chatbot and
-     * providing instructions on how to use its various features.
+     * Displays a welcome message to the user, introducing the chatbot
      */
     public String getWelcomeMessage() {
         return "Hello! I'm Xan! I am your personalized task manager!\n" + getCommandMessage();
     }
-
     /**
      * Displays a goodbye message to the user.
      */
     public String getGoodbyeMessage() {
         return "Goodbye! Have a nice day!";
     }
-
     /**
      * Displays a help message to the user.
      */
     public String getHelpMessage() {
         return "Here are the list of commands you can use:\n" + getCommandMessage();
     }
-
+    /**
+     * Displays a message to the user with the list of commands available.
+     */
     public String getCommandMessage() {
         return """
                 Enter the following commands to get started:
