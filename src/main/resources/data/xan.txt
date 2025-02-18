@@ -1,1 +1,3 @@
-[T][ ] readbook
+[T][X] readbook
+[D][ ] return book (by: Dec 01 2019)
+[E][X] project meeting (from: 2pm to: 4pm)

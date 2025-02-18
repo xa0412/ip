@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -72,22 +73,21 @@ public class TaskManager {
                     break;
                 case 'D':
                     if (taskDetails.contains("(by: ")) {
-                        assert taskDetails.contains("(by: ") : "Deadline task should contain (by: clause";
                         String[] parts = taskDetails.split("\\(by: ");
-                        String description = parts[0].trim();
-                        LocalDate date = LocalDate.parse(parts[1].replace(")", "").trim());
-                        task = new Deadline(description, date);
+                        String deadlineDescription = parts[0].trim();
+                        String dateString = parts[1].replace(")", "").trim();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
+                        LocalDate date = LocalDate.parse(dateString, formatter);
+                        task = new Deadline(deadlineDescription, date);
                     }
                     break;
                 case 'E':
                     if (taskDetails.contains("(from: ") && taskDetails.contains("to: ")) {
-                        assert taskDetails.contains("(from: ") && taskDetails.contains("to: ")
-                                : "Event task should contain (from: and to: clauses";
                         String[] parts = taskDetails.split("(\\(from: )| (to: )");
-                        String description = parts[0].trim();
+                        String eventDescription = parts[0].trim();
                         String startTime = parts[1].trim();
                         String endTime = parts[2].replace(")", "").trim();
-                        task = new Event(description, startTime, endTime);
+                        task = new Event(eventDescription, startTime, endTime);
                     }
                     break;
                 default:
@@ -181,14 +181,18 @@ public class TaskManager {
             }
             String[] deadlineParts = details.split("/by ", 2);
             LocalDate date = LocalDate.parse(deadlineParts[1].replace(")", "").trim());
-            task = new Deadline(deadlineParts[0].trim(), date);
+            String deadlineDescription = deadlineParts[0].trim();
+            task = new Deadline(deadlineDescription, date);
             break;
         case EVENT:
             if (!details.contains("/from ") || !details.contains("/to ")) {
                 throw new XanException("An event task must have both '/from' and '/to' clauses!");
             }
             String[] eventParts = details.split("/from | /to ");
-            task = new Event(eventParts[0].trim(), eventParts[1].trim(), eventParts[2].trim());
+            String eventDescription = eventParts[0].trim();
+            String startTime = eventParts[1].trim();
+            String endTime = eventParts[2].replace(")", "").trim();
+            task = new Event(eventDescription, startTime, endTime);
             break;
         default:
             throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline', "
