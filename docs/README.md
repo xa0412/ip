@@ -1,6 +1,6 @@
 # XanChatBot User Guide
 
-![XanChatBot](docs/images/Ui.png)
+![XanChatBot](/docs/Ui.png)
 
 This is Xan, your personalized task manager help to keep track of various thing
 
