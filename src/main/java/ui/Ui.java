@@ -1,8 +1,8 @@
 package ui;
 
 /**
- * The Ui class is responsible for interacting with the user, It handles welcome and
- * goodbye messages to the user.
+ * The Ui class is responsible for interacting with the user, It handles
+ * message such as welcome message, goodbye message, help message and command.
  */
 public class Ui {
 
