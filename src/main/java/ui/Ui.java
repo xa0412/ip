@@ -7,7 +7,7 @@ package ui;
 public class Ui {
 
     /**
-     * Displays a welcome message to the user, introducing the chatbot
+     * Displays a welcome message to the user and introduce the chatbot.
      */
     public String getWelcomeMessage() {
         return "Hello! I'm Xan! I am your personalized task manager!\n" + getCommandMessage();
