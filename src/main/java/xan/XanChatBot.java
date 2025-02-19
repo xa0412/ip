@@ -1,5 +1,11 @@
 package xan;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import task.TaskManager;
 import ui.Ui;
 
@@ -7,7 +13,8 @@ import ui.Ui;
  * Represents the main chatbot program.
  */
 public class XanChatBot {
-    private static final String FILE_PATH = "src/main/resources/data/xan.txt";
+    private static final String DIRECTORY = "data";
+    private static final String FILE_PATH = DIRECTORY + "/xan.txt";
     private final TaskManager taskManager;
     private final Ui ui;
     private boolean isExit;
@@ -17,9 +24,28 @@ public class XanChatBot {
      */
     public XanChatBot() {
         this.ui = new Ui();
+        ensureFileExists();
         this.taskManager = new TaskManager(FILE_PATH);
         this.isExit = false;
         taskManager.loadTaskFromFile();
+    }
+    /**
+     * Ensures that the file exists.
+     */
+    private void ensureFileExists() {
+        try {
+            // Ensure directory exists
+            Files.createDirectories(Paths.get(DIRECTORY));
+
+            // Ensure file exists
+            Path filePath = Paths.get(FILE_PATH);
+            if (Files.notExists(filePath)) {
+                Files.createFile(filePath);
+                System.out.println("Created file: " + filePath);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating file: " + e.getMessage(), e);
+        }
     }
     /**
      * Returns the welcome message.
@@ -29,7 +55,11 @@ public class XanChatBot {
     public String getWelcomeMessage() {
         return ui.getWelcomeMessage();
     }
-
+    /**
+     * Returns the status of exit.
+     *
+     * @return True or False.
+     */
     public boolean isExit() {
         return isExit;
     }
@@ -63,7 +93,7 @@ public class XanChatBot {
                 return taskManager.addTask(input);
             } else {
                 throw new IllegalArgumentException("please input the correct command, "
-                        + "press help to see the list of commands");
+                        + "press help to see the list of commands.");
             }
         } catch (IllegalArgumentException e) {
             return e.getMessage();

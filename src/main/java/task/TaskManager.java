@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,17 +19,11 @@ import exception.XanException;
  * to display tasks to the user and supports different types of tasks such as Todo, Deadline, and Event.
  */
 public class TaskManager {
-    private final ArrayList<Task> LIST_ARRAY = new ArrayList<>();
+    private final ArrayList<Task> listArray = new ArrayList<>();
     private final String filePath;
 
     public TaskManager(String filePath) {
         this.filePath = filePath;
-    }
-    /**
-     * Constructor for test.java.task.taskManager.
-     */
-    public TaskManager() {
-        this.filePath = null;
     }
 
     /**
@@ -98,7 +94,7 @@ public class TaskManager {
                     if (isDone) {
                         task.markAsDone();
                     }
-                    LIST_ARRAY.add(task);
+                    listArray.add(task);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -109,23 +105,17 @@ public class TaskManager {
     }
 
     /**
-     * Saves the current list of tasks to a file. Handles exceptions for file not found
-     * or write errors.
-     * Exceptions handled:
-     * @throws IllegalArgumentException - If the file does not exist,
-     *     an exception is thrown with a message indicating the invalid file path.
+     * Saves the current list of tasks to a file.
+     * Handles exceptions that may occur during file writing.
+     * @throws RuntimeException - If an error occurs while saving tasks.
      */
     public void saveTask() {
+        Path filePath = Paths.get(this.filePath);
         try {
-            File inputFile = new File(filePath);
-            if (!inputFile.exists()) {
-                throw new IllegalArgumentException("The file could not be found: " + filePath);
-            }
-
-            FileWriter fw = new FileWriter(inputFile);
+            FileWriter fw = new FileWriter(filePath.toFile());
             BufferedWriter bw = new BufferedWriter(fw);
 
-            for (Task task : LIST_ARRAY) {
+            for (Task task : listArray) {
                 bw.write(task.toString());
                 bw.newLine();
             }
@@ -142,12 +132,12 @@ public class TaskManager {
      * @return A string containing the list of tasks or a message if empty.
      */
     public String showTask() {
-        if (LIST_ARRAY.isEmpty()) {
+        if (listArray.isEmpty()) {
             return "No tasks found";
         }
         StringBuilder result = new StringBuilder("Here are the tasks in your list:\n");
-        for (int i = 0; i < LIST_ARRAY.size(); i++) {
-            result.append(i + 1).append(". ").append(LIST_ARRAY.get(i)).append("\n");
+        for (int i = 0; i < listArray.size(); i++) {
+            result.append(i + 1).append(". ").append(listArray.get(i)).append("\n");
         }
         return result.toString();
     }
@@ -198,7 +188,7 @@ public class TaskManager {
             throw new IllegalArgumentException("Invalid task type! Please use 'todo', 'deadline', "
                     + "'event', 'delete', 'list', 'mark', or 'unmark'.");
         }
-        LIST_ARRAY.add(task);
+        listArray.add(task);
         saveTask();
         return addTaskMessage(task);
     }
@@ -214,10 +204,10 @@ public class TaskManager {
     public String markTask(String chat) {
         try {
             int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-            if (taskIndex < 0 || taskIndex >= LIST_ARRAY.size()) {
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
                 return "Invalid task number! Please enter a valid task index.";
             }
-            Task task = LIST_ARRAY.get(taskIndex);
+            Task task = listArray.get(taskIndex);
             task.markAsDone();
             saveTask();
             return "Nice! I've marked this task as done:\n" + (taskIndex + 1) + ". " + task + "\n";
@@ -236,10 +226,10 @@ public class TaskManager {
     public String unmarkTask(String chat) {
         try {
             int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-            if (taskIndex < 0 || taskIndex >= LIST_ARRAY.size()) {
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
                 return "Invalid task number! Please enter a valid task index.";
             }
-            Task task = LIST_ARRAY.get(taskIndex);
+            Task task = listArray.get(taskIndex);
             task.markAsNotDone();
             saveTask();
             return "Ok, I've marked this task as not done:\n" + (taskIndex + 1) + ". " + task + "\n";
@@ -257,7 +247,7 @@ public class TaskManager {
     public String addTaskMessage(Task task) {
         return "Got it. I've added this task:\n"
                 + task.toString() + "\n"
-                + "Now you have " + LIST_ARRAY.size() + " tasks in the list.";
+                + "Now you have " + listArray.size() + " tasks in the list.";
     }
 
     /**
@@ -270,17 +260,17 @@ public class TaskManager {
     public String deleteTask(String chat) {
         try {
             int taskIndex = Integer.parseInt(chat.split(" ")[1]) - 1;
-            if (taskIndex < 0 || taskIndex >= LIST_ARRAY.size()) {
+            if (taskIndex < 0 || taskIndex >= listArray.size()) {
                 return "Invalid task index! Please provide a valid task number for task deletion.";
             }
-            Task task = LIST_ARRAY.get(taskIndex);
+            Task task = listArray.get(taskIndex);
 
             StringBuilder message = new StringBuilder();
             message.append("Noted. I've removed this task:\n");
             message.append(taskIndex + 1).append(".").append(task.toString()).append("\n");
 
-            LIST_ARRAY.remove(taskIndex);
-            message.append("Now you have ").append(LIST_ARRAY.size()).append(" tasks in the list.\n");
+            listArray.remove(taskIndex);
+            message.append("Now you have ").append(listArray.size()).append(" tasks in the list.\n");
             saveTask();
             return message.toString();
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
@@ -292,7 +282,7 @@ public class TaskManager {
      * Returns the number of tasks in the list.
      */
     public int getListArraySize() {
-        return LIST_ARRAY.size();
+        return listArray.size();
     }
 
     /**
@@ -303,10 +293,10 @@ public class TaskManager {
      * @throws IndexOutOfBoundsException If the index is out of range.
      */
     public Task getTask(int index) {
-        if (index < 0 || index >= LIST_ARRAY.size()) {
+        if (index < 0 || index >= listArray.size()) {
             throw new IndexOutOfBoundsException("Invalid task index: " + index);
         }
-        return LIST_ARRAY.get(index);
+        return listArray.get(index);
     }
 
     /**
@@ -327,7 +317,7 @@ public class TaskManager {
         message.append("Here are the matching tasks in your list:\n");
         boolean isFound = false;
         int displaySearchIndex = 1;
-        for (Task task : LIST_ARRAY) {
+        for (Task task : listArray) {
             if (task.getDescription().toLowerCase().contains(keyWord.toLowerCase())) {
                 message.append(displaySearchIndex).append(".").append(task).append("\n");
                 isFound = true;
