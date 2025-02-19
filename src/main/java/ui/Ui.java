@@ -4,7 +4,6 @@ package ui;
  * The Ui class is responsible for interacting with the user, It handles welcome and
  * goodbye messages to the user.
  */
-@SuppressWarnings("checkstyle:Regexp")
 public class Ui {
 
     /**
